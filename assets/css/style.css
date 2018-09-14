@@ -70,6 +70,21 @@ hr {
 	margin-top: 7px;
 }
 
+/*entry window*/
+.js-no_entry {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	display: flex;
+	margin-top: -50px;
+    margin-left: -270px
+}
+
+.no_entry_message {
+	color: darkgrey;
+	margin-top: 0;
+	margin-right: 15px
+}
 .search_box {
 	margin-bottom: 10px;
 }
