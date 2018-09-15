@@ -21,6 +21,13 @@ hr {
   margin-top: 20px;
 }
 
+.show {
+	display: block
+}
+
+.hidden {
+	display: none
+}
 
 /*nav bar*/ 
 
@@ -87,4 +94,18 @@ hr {
 }
 .search_box {
 	margin-bottom: 10px;
+}
+
+#js-entry_details {
+	position: absolute;
+	flex-direction: column;
+	top: 50%;
+	left: 50%;
+	display: flex;
+	margin-top: -50px;
+    margin-left: -270px
+}
+
+.pages_error {
+	color: red
 }

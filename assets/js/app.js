@@ -19,15 +19,52 @@ var addBook = function (state, title, cover) {
           bookTitle: title,
           coverURL: cover,
           entries: [],
-          numOfEntries: 0
+          totalPages: 0,
+          numOfEntries: 0,
+          numOfPages: 0,
+          isActive: false
         }
   }
   var oldList = JSON.parse(localStorage.getItem('bookList')) || [] ;
   state.booksAdded.push(item);
-  oldList.push(item);
+  oldList.push(state.booksAdded);
   localStorage.setItem('bookList', JSON.stringify(oldList));
 };
 
+var addEntry = function(state, bookTaken){
+  var startNum = Number($('#start_page_num').val());
+  var endNum = Number($('#end_page_num').val());
+  var getEntriesArray = bookTaken.book.entries;
+  var entryDetails = { 
+    content: '', 
+    session: getEntriesArray.length + 1,
+    date: $('.session_date').text(),
+    pageStart: startNum,
+    pageEnd: endNum,
+    pagesRead: (function() {
+      return endNum - startNum
+    })(),
+  }
+  if(startNum>endNum) {
+        $('.pages_error').toggleClass('hidden');
+      }
+  else {
+        var oldList = JSON.parse(localStorage.bookList);
+        //getEntriesArray.push(entryDetails);
+        //oldList.push(getEntriesArray);
+        //console.log(oldList);
+        //localStorage.setItem('bookList', JSON.stringify(oldList))
+    }
+}
+
+var changeActiveState = function(bookTaken){
+  var oldList = JSON.parse(localStorage.bookList) || [];
+  var bookInHand = oldList[bookIndex];
+  console.log(oldList);
+  bookTaken.book.isActive = true;
+  //oldList.push(bookTaken);
+  // localStorage.setItem('bookList', JSON.stringify(oldList));  
+}
 
 
 //render fun.
@@ -49,24 +86,39 @@ function renderResult(result){
 function renderEntriesWindow(title){
   //change header to book title 
   $('.js-main_header').text(title);
-  //find the num of entries to the required book
-  var arr = state.booksAdded;
-  var wantedBook = arr.find(function (obj) { return obj.book.bookTitle === title; });
-  var getEntries = wantedBook.book.numOfEntries;
+  //get book object
+  var bookTaken = getBookInHand(title);
+  //change the active state
+  changeActiveState(bookTaken);
+  //find the num of entries of the required book
+  var getEntries = bookTaken.book.numOfEntries; 
   //if there's no entires
   if (getEntries === 0) {
     var message = "look's like you have no entries yet, start by adding one here: ";
     var entry = `<div class="js-no_entry">
                     <h3 class="no_entry_message">${message}</h4>
-                    <button class="add_entry"> + </button>
+                    <button class="btn-add_entry"> + </button>
                  </div>`
-    $('main').html(entry)
+    $('.container').html(entry)
   }
   else {
     alert("enter")
   }
-  //var entries = state.booksAdded.bookTitle
-  //$('main').html("") 
+}
+
+function renderEntryInputDetails(){
+    var bookTaken = getActiveBook();
+    //get sessionNum
+    var getEntries = bookTaken.book.numOfEntries + 1;
+    var form = `<form id="js-entry_details">
+                    <h3 class='session_num'>session #: ${getEntries} </h3>
+                    <h4 class='session_date'>${getDate()}</h4>
+                    <span>pages from </span><input type="number" id="start_page_num" required></input>
+                    <span class="pages_error hidden" >check the pages</span>
+                    <span> to </span><input type="number" id="end_page_num" required></input>
+                    <button type="submit" class="btn-submit_entry_details">Add entry</button>                    
+                </form>`;
+    $('.container').html(form)
 }
 
 
@@ -86,6 +138,8 @@ function renderData(data){
   $(".js-results").html(results)
 }
 
+
+
 //event listen
 function handleFormSubmit() {
 $('#js-search_form').submit(function(event){
@@ -104,14 +158,65 @@ $('ul').on('click','.js-result_title', function(e) {
     var coverURL = $('.js-result_thumb_img').attr('src');
     addBook(state,title,coverURL);
     renderEntriesWindow(title)
-    //localStorage.setItem('bookTitle', title);
-    //state.booksAdded.title = title;
-})
+  })
+}
+
+function handleAddEntryDetails() {
+$('.container').on('click','.btn-add_entry', function(e) {
+    renderEntryInputDetails();
+  })
+}
+
+function handleSubmitEntry() {
+$('.container').on('click','.btn-submit_entry_details', function(e) {
+    e.preventDefault();
+    var bookTaken = getActiveBook();
+    addEntry(state, bookTaken);
+  })
+}
+
+//general methods
+var getBookInHand = function(title) {
+  var arr = state.booksAdded;
+  var bookIndex = arr.findIndex(function (obj) { return obj.book.bookTitle === title; });
+  var getBookInHand = state.booksAdded[bookIndex];
+  return getBookInHand
+}
+
+var getActiveBook = function() {
+  var arr = state.booksAdded;
+  var bookIndex = arr.findIndex(function (obj) { return obj.book.isActive === true; });
+  var getActiveBook = state.booksAdded[bookIndex];
+  return getActiveBook
+  }
+
+var getTitle = function(){
+  var title = $('.js-main_header').text();
+  return title
+}
+
+var getDate = function(){
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth()+1;
+  var yyyy = today.getFullYear();
+
+  if (dd<10){
+    dd = '0'+ dd
+  }
+  if (mm<10) {
+    mm = '0' + mm
+  }
+
+  today = dd + '-' + mm + '-' + yyyy;
+  return today
 }
 
 $(function() {
   handleFormSubmit();
-  handleBookSubmit()
+  handleBookSubmit();
+  handleAddEntryDetails();
+  handleSubmitEntry();
 })
 
 
