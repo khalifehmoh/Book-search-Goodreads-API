@@ -109,3 +109,20 @@ hr {
 .pages_error {
 	color: red
 }
+
+.js-input_window {
+	margin-top:  100px;
+	margin-left:  50px
+}
+
+.text_input_area{
+	width: 720px;
+	height: 600px;
+}
+
+.btn-submit_text_input{
+	margin-bottom: 20px;
+	width: 30px;
+	height: 30px;
+	border-radius: 5px;
+}

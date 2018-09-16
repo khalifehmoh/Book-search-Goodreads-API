@@ -12,6 +12,22 @@ function getDataFromAPI(searchTerm, callback) {
   $.get("http://query.yahooapis.com/v1/public/yql", query, callback);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //state fun
 var addBook = function (state, title, cover) {
   var item = {
@@ -31,6 +47,13 @@ var addBook = function (state, title, cover) {
   localStorage.setItem('bookList', JSON.stringify(oldList));
 };
 
+var updateBook = function (state, bookTaken, entryTaken) {
+  var getEntry = entryTaken;
+  console.log(getEntry);
+  var getPagesFromEntry = getEntry.pagesRead;
+  console.log(getPagesFromEntry)
+}
+
 var addEntry = function(state, bookTaken){
   var startNum = Number($('#start_page_num').val());
   var endNum = Number($('#end_page_num').val());
@@ -44,27 +67,48 @@ var addEntry = function(state, bookTaken){
     pagesRead: (function() {
       return endNum - startNum
     })(),
+    active: true
   }
-  if(startNum>endNum) {
+  if(startNum>endNum || (startNum <= 0 || endNum <= 0 )) {
         $('.pages_error').toggleClass('hidden');
       }
-  else {
-        var oldList = JSON.parse(localStorage.bookList);
-        //getEntriesArray.push(entryDetails);
+  else if (startNum<endNum || (startNum >= 0 || endNum >= 0)) {
+        $('.pages_error').addClass('hidden');
+        //var oldList = JSON.parse(localStorage.bookList);
+        getEntriesArray.push(entryDetails);
         //oldList.push(getEntriesArray);
         //console.log(oldList);
         //localStorage.setItem('bookList', JSON.stringify(oldList))
     }
 }
 
-var changeActiveState = function(bookTaken){
-  var oldList = JSON.parse(localStorage.bookList) || [];
-  var bookInHand = oldList[bookIndex];
-  console.log(oldList);
+var changeIsActiveState = function(bookTaken){
+  // var oldList = JSON.parse(localStorage.bookList) || [];
+  // var bookInHand = oldList[bookIndex];
+  // console.log(oldList);
   bookTaken.book.isActive = true;
   //oldList.push(bookTaken);
   // localStorage.setItem('bookList', JSON.stringify(oldList));  
 }
+
+var changeEntryActiveState = function(bookTaken){
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //render fun.
@@ -89,7 +133,7 @@ function renderEntriesWindow(title){
   //get book object
   var bookTaken = getBookInHand(title);
   //change the active state
-  changeActiveState(bookTaken);
+  changeIsActiveState(bookTaken);
   //find the num of entries of the required book
   var getEntries = bookTaken.book.numOfEntries; 
   //if there's no entires
@@ -110,16 +154,65 @@ function renderEntryInputDetails(){
     var bookTaken = getActiveBook();
     //get sessionNum
     var getEntries = bookTaken.book.numOfEntries + 1;
+
     var form = `<form id="js-entry_details">
-                    <h3 class='session_num'>session #: ${getEntries} </h3>
+                    <h3 class='session_num'>session #: <span class='session_num_num'>${getEntries} </span></h3>
                     <h4 class='session_date'>${getDate()}</h4>
                     <span>pages from </span><input type="number" id="start_page_num" required></input>
                     <span class="pages_error hidden" >check the pages</span>
                     <span> to </span><input type="number" id="end_page_num" required></input>
                     <button type="submit" class="btn-submit_entry_details">Add entry</button>                    
                 </form>`;
+
     $('.container').html(form)
 }
+
+function renderEntriesInput(){
+  //get book object
+  var bookTaken = getActiveBook();
+  var entryTaken = getActiveEntry();
+  var startPage = entryTaken.pageStart;
+  var endPage = entryTaken.pageEnd;
+  var sessionNum = bookTaken.book.numOfEntries + 1;
+  //$('.js-main_header').text(title);
+  
+  
+  var sessionDetails = `<div class="js-session_details">
+                            <h3 class='session_num'>session #: ${sessionNum}</h3>
+                            <h4 class='session_date'>${getDate()}</h4>
+                            <span>pages: ${startPage} - ${endPage}</span>                 
+                        </div>`
+
+  var inputArea = `     <div class="js-text_input">
+                            <textarea class="text_input_area"></textarea>
+                            <button class="btn-submit_text_input">+</button>
+                        </div>`
+
+  var entryWindow = `<div class="js-input_window">
+                  ${sessionDetails}
+                  <hr>
+                  ${inputArea}
+                </div>`
+
+  $('.container').html(entryWindow)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //callback fun.
@@ -137,6 +230,13 @@ function renderData(data){
   }
   $(".js-results").html(results)
 }
+
+
+
+
+
+
+
 
 
 
@@ -167,13 +267,45 @@ $('.container').on('click','.btn-add_entry', function(e) {
   })
 }
 
-function handleSubmitEntry() {
+function handleAddEntry() {
 $('.container').on('click','.btn-submit_entry_details', function(e) {
     e.preventDefault();
     var bookTaken = getActiveBook();
     addEntry(state, bookTaken);
+    var entryTaken = getActiveEntry();
+    updateBook(state, bookTaken, entryTaken);
+    renderEntriesInput()
   })
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //general methods
 var getBookInHand = function(title) {
@@ -183,12 +315,20 @@ var getBookInHand = function(title) {
   return getBookInHand
 }
 
+var getActiveEntry = function() {
+  var activeBookIndex = getActiveBook();
+  var entry = activeBookIndex.book.entries;
+  var getActiveEntry = entry.find(function (obj){ return obj.active === true; });
+  return getActiveEntry
+}
+
+
 var getActiveBook = function() {
   var arr = state.booksAdded;
   var bookIndex = arr.findIndex(function (obj) { return obj.book.isActive === true; });
   var getActiveBook = state.booksAdded[bookIndex];
   return getActiveBook
-  }
+}
 
 var getTitle = function(){
   var title = $('.js-main_header').text();
@@ -212,11 +352,27 @@ var getDate = function(){
   return today
 }
 
+// var getActiveEntryIndex = function() {
+//   var activeBookIndex = getActiveBook();
+//   var entry = activeBookIndex.book.entries;
+//   var session = $('.session_num_num').text();
+//   console.log(session);
+//   var entryIndex = entry.find(function (obj) { return obj. === session; });
+//   console.log(entryIndex);
+//   var blabla = entry[entryIndex]
+//   return entryIndex
+// }
+
+
+
+
+
+
 $(function() {
   handleFormSubmit();
   handleBookSubmit();
   handleAddEntryDetails();
-  handleSubmitEntry();
+  handleAddEntry();
 })
 
 
