@@ -35,7 +35,7 @@ var addBook = function (state, title, cover) {
           bookTitle: title,
           coverURL: cover,
           entries: [],
-          totalPages: 0,
+          pageOn: 1,
           numOfEntries: 0,
           numOfPages: 0,
           isActive: false
@@ -62,10 +62,10 @@ var addEntry = function(state, bookTaken){
     })(),
     active: true
   }
-  if(startNum>endNum || (startNum <= 0 || endNum <= 0 )) {
+  if(startNum >= endNum || (startNum <= 0 || endNum <= 0 )) {
         $('.pages_error').toggleClass('hidden');
       }
-  else if (startNum<endNum || (startNum >= 0 || endNum >= 0)) {
+  else if (startNum < endNum || (startNum >= 0 || endNum >= 0)) {
         $('.pages_error').addClass('hidden');
         //var oldList = JSON.parse(localStorage.bookList);
         getEntriesArray.push(entryDetails);
@@ -95,6 +95,11 @@ var changeEntryActiveState = function(entryTaken){
   entryTaken.active = false
 }
 
+var setPageStartToPageOn = function() {
+  var entryTaken = getActiveEntry();
+  var bookTaken = getActiveBook();
+  entryTaken.pageStart = bookTaken.book.pageOn
+}
 var updateBook = function (state) {
   //get objects
   var entryTaken = getActiveEntry();
@@ -105,7 +110,9 @@ var updateBook = function (state) {
   bookTaken.book.numOfPages += getPagesFromEntry;
   //up num of entries
   bookTaken.book.numOfEntries += 1;
-  changeEntryActiveState(entryTaken)
+  changeEntryActiveState(entryTaken);
+  //up pageOn 
+  bookTaken.book.pageOn = entryTaken.pageEnd
 }
 
 
@@ -164,7 +171,6 @@ function renderEntriesWindow(title){
 
  function renderEntriesList(){
   var bookTaken = getActiveBook();
-  console.log(bookTaken);
   //iterate over each entry and add them into an array
   var entryArrList = bookTaken.book.entries.map(function(entry) {
                   return `<div class="js-entry">
@@ -184,12 +190,22 @@ function renderEntryInputDetails(){
     var bookTaken = getActiveBook();
     //get sessionNum
     var getEntries = bookTaken.book.numOfEntries + 1;
+    //check for first entry
+    var checkEntry = (function() {
+      if(bookTaken.book.numOfEntries === 0){
+        return `<input type="number" id="start_page_num" required></input>`
+      }
+      else if (bookTaken.book.numOfEntries > 0) {
+      
+          return `<input type="number" id="start_page_num" value="${bookTaken.book.pageOn}" readonly></input>`
+      }
+    })();
 
     var form = `<form id="js-entry_details">
                     <h3 class='session_num'>session #: <span class='session_num_num'>${getEntries} </span></h3>
                     <h4 class='session_date'>${getDate()}</h4>
-                    <span>pages from </span><input type="number" id="start_page_num" required></input>
-                    <span class="pages_error hidden" >check the pages</span>
+                    <span>pages from </span>${checkEntry}
+                    <span class="pages_error hidden">check the pages</span>
                     <span> to </span><input type="number" id="end_page_num" required></input>
                     <button type="submit" class="btn-submit_entry_details">Add entry</button>                    
                 </form>`;
@@ -203,26 +219,18 @@ function renderEntriesInput(){
   var entryTaken = getActiveEntry();
   var startPage = entryTaken.pageStart;
   var endPage = entryTaken.pageEnd;
-
-  var sessionNum = (function() {
-      if (bookTaken.book.numOfEntries === 0) {
-      return bookTaken.book.numOfEntries + 1
-    }
-      else {
-      return bookTaken.book.numOfEntries
-    }
-    })()
-  //$('.js-main_header').text(title);
-  
+  var sessionNum = entryTaken.session;
+  var entryDate = entryTaken.date;
+  var entryContent = entryTaken.content
   
   var sessionDetails = `<div class="js-session_details">
                             <h3 class='session_num'>session #: ${sessionNum}</h3>
-                            <h4 class='session_date'>${getDate()}</h4>
+                            <h4 class='session_date'>${entryDate}</h4>
                             <h4>pages: ${startPage} - ${endPage}</h4>                 
                         </div>`
 
   var inputArea = `     <div class="js-text_input">
-                            <textarea class="text_input_area"></textarea>
+                            <textarea class="text_input_area" value="${entryContent}"></textarea>
                             <button class="btn-submit_text_input">+</button>
                         </div>`
 
@@ -235,22 +243,6 @@ function renderEntriesInput(){
   $('.container').html(entryWindow)
 }
 
-function renderEntryInputDetails(){
-    var bookTaken = getActiveBook();
-    //get sessionNum
-    var getEntries = bookTaken.book.numOfEntries + 1;
-
-    var form = `<form id="js-entry_details">
-                    <h3 class='session_num'>session #: <span class='session_num_num'>${getEntries} </span></h3>
-                    <h4 class='session_date'>${getDate()}</h4>
-                    <span>pages from </span><input type="number" id="start_page_num" required></input>
-                    <span class="pages_error hidden" >check the pages</span>
-                    <span> to </span><input type="number" id="end_page_num" required></input>
-                    <button type="submit" class="btn-submit_entry_details">Add entry</button>                    
-                </form>`;
-
-    $('.container').html(form)
-}
 
 
 
@@ -419,16 +411,6 @@ var getDate = function(){
   return today
 }
 
-// var getActiveEntryIndex = function() {
-//   var activeBookIndex = getActiveBook();
-//   var entry = activeBookIndex.book.entries;
-//   var session = $('.session_num_num').text();
-//   console.log(session);
-//   var entryIndex = entry.find(function (obj) { return obj. === session; });
-//   console.log(entryIndex);
-//   var blabla = entry[entryIndex]
-//   return entryIndex
-// }
 
 
 
