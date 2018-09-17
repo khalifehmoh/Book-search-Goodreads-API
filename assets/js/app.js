@@ -47,13 +47,6 @@ var addBook = function (state, title, cover) {
   localStorage.setItem('bookList', JSON.stringify(oldList));
 };
 
-var updateBook = function (state, bookTaken, entryTaken) {
-  var getEntry = entryTaken;
-  console.log(getEntry);
-  var getPagesFromEntry = getEntry.pagesRead;
-  console.log(getPagesFromEntry)
-}
-
 var addEntry = function(state, bookTaken){
   var startNum = Number($('#start_page_num').val());
   var endNum = Number($('#end_page_num').val());
@@ -82,7 +75,14 @@ var addEntry = function(state, bookTaken){
     }
 }
 
-var changeIsActiveState = function(bookTaken){
+var addEntryContent = function(state, content){
+  var getEntry = getActiveEntry();
+  getEntry.content = content;
+
+}
+
+var changeIsActiveState = function(title){;
+  var bookTaken = getBookInHand(title);
   // var oldList = JSON.parse(localStorage.bookList) || [];
   // var bookInHand = oldList[bookIndex];
   // console.log(oldList);
@@ -91,8 +91,21 @@ var changeIsActiveState = function(bookTaken){
   // localStorage.setItem('bookList', JSON.stringify(oldList));  
 }
 
-var changeEntryActiveState = function(bookTaken){
-  
+var changeEntryActiveState = function(entryTaken){
+  entryTaken.active = false
+}
+
+var updateBook = function (state) {
+  //get objects
+  var entryTaken = getActiveEntry();
+  var bookTaken = getActiveBook();
+  //update book
+  //up num of pages
+  var getPagesFromEntry = entryTaken.pagesRead;
+  bookTaken.book.numOfPages += getPagesFromEntry;
+  //up num of entries
+  bookTaken.book.numOfEntries += 1;
+  changeEntryActiveState(entryTaken)
 }
 
 
@@ -132,8 +145,7 @@ function renderEntriesWindow(title){
   $('.js-main_header').text(title);
   //get book object
   var bookTaken = getBookInHand(title);
-  //change the active state
-  changeIsActiveState(bookTaken);
+  console.log(bookTaken);
   //find the num of entries of the required book
   var getEntries = bookTaken.book.numOfEntries; 
   //if there's no entires
@@ -146,8 +158,26 @@ function renderEntriesWindow(title){
     $('.container').html(entry)
   }
   else {
-    alert("enter")
+    renderEntriesList();
   }
+}
+
+ function renderEntriesList(){
+  var bookTaken = getActiveBook();
+  console.log(bookTaken);
+  //iterate over each entry and add them into an array
+  var entryArrList = bookTaken.book.entries.map(function(entry) {
+                  return `<div class="js-entry">
+                           <h3 class="entry_session"># ${entry.session}</h3><h3 class="entry_pages"> ,pages ${entry.pageStart} - ${entry.pageEnd}</h3>
+                           <h4 class="entry_date">${entry.date}</h4>
+                           <p>${entry.content}</p>
+                          </div>`
+  })
+  var render = `<div class="js-entires_container">
+                    ${entryArrList}
+                    <button class="btn-add_entry">+</button>
+                </div>`
+  $('.container').html(render)
 }
 
 function renderEntryInputDetails(){
@@ -173,14 +203,22 @@ function renderEntriesInput(){
   var entryTaken = getActiveEntry();
   var startPage = entryTaken.pageStart;
   var endPage = entryTaken.pageEnd;
-  var sessionNum = bookTaken.book.numOfEntries + 1;
+
+  var sessionNum = (function() {
+      if (bookTaken.book.numOfEntries === 0) {
+      return bookTaken.book.numOfEntries + 1
+    }
+      else {
+      return bookTaken.book.numOfEntries
+    }
+    })()
   //$('.js-main_header').text(title);
   
   
   var sessionDetails = `<div class="js-session_details">
                             <h3 class='session_num'>session #: ${sessionNum}</h3>
                             <h4 class='session_date'>${getDate()}</h4>
-                            <span>pages: ${startPage} - ${endPage}</span>                 
+                            <h4>pages: ${startPage} - ${endPage}</h4>                 
                         </div>`
 
   var inputArea = `     <div class="js-text_input">
@@ -189,14 +227,30 @@ function renderEntriesInput(){
                         </div>`
 
   var entryWindow = `<div class="js-input_window">
-                  ${sessionDetails}
-                  <hr>
-                  ${inputArea}
-                </div>`
+                        ${sessionDetails}
+                        <hr>
+                        ${inputArea}
+                     </div>`
 
   $('.container').html(entryWindow)
 }
 
+function renderEntryInputDetails(){
+    var bookTaken = getActiveBook();
+    //get sessionNum
+    var getEntries = bookTaken.book.numOfEntries + 1;
+
+    var form = `<form id="js-entry_details">
+                    <h3 class='session_num'>session #: <span class='session_num_num'>${getEntries} </span></h3>
+                    <h4 class='session_date'>${getDate()}</h4>
+                    <span>pages from </span><input type="number" id="start_page_num" required></input>
+                    <span class="pages_error hidden" >check the pages</span>
+                    <span> to </span><input type="number" id="end_page_num" required></input>
+                    <button type="submit" class="btn-submit_entry_details">Add entry</button>                    
+                </form>`;
+
+    $('.container').html(form)
+}
 
 
 
@@ -240,6 +294,8 @@ function renderData(data){
 
 
 
+
+
 //event listen
 function handleFormSubmit() {
 $('#js-search_form').submit(function(event){
@@ -248,7 +304,7 @@ $('#js-search_form').submit(function(event){
   $(this).find("#js-search_entry").val("");
   var adjustedQuery = encodeURIComponent(query)
   console.log(adjustedQuery);
-  getDataFromAPI(adjustedQuery, renderData)
+  getDataFromAPI(adjustedQuery, renderData);
   })
 }
 
@@ -257,7 +313,8 @@ $('ul').on('click','.js-result_title', function(e) {
     var title = $(this).text();
     var coverURL = $('.js-result_thumb_img').attr('src');
     addBook(state,title,coverURL);
-    renderEntriesWindow(title)
+    renderEntriesWindow(title);
+    changeIsActiveState(title);
   })
 }
 
@@ -273,8 +330,18 @@ $('.container').on('click','.btn-submit_entry_details', function(e) {
     var bookTaken = getActiveBook();
     addEntry(state, bookTaken);
     var entryTaken = getActiveEntry();
-    updateBook(state, bookTaken, entryTaken);
+    //updateBook(state, bookTaken, entryTaken);
     renderEntriesInput()
+  })
+}
+
+function handleSubmitEntryContent() {
+$('.container').on('click','.btn-submit_text_input', function(e) {
+    var title= $('.js-main_header').text();;
+    var content = $('.text_input_area').val();
+    addEntryContent(state,content);
+    updateBook(state);
+    renderEntriesWindow(title)
   })
 }
 
@@ -373,6 +440,7 @@ $(function() {
   handleBookSubmit();
   handleAddEntryDetails();
   handleAddEntry();
+  handleSubmitEntryContent()
 })
 
 
