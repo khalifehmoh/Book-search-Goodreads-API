@@ -76,9 +76,8 @@ var addEntry = function(state, bookTaken){
 }
 
 var addEntryContent = function(state, content){
-  var getEntry = getActiveEntry();
+  var getEntry = getEntryBySession();
   getEntry.content = content;
-
 }
 
 var changeIsActiveState = function(title){;
@@ -95,6 +94,7 @@ var changeEntryActiveState = function(entryTaken){
   entryTaken.active = false
 }
 
+
 var setPageStartToPageOn = function() {
   var entryTaken = getActiveEntry();
   var bookTaken = getActiveBook();
@@ -102,7 +102,7 @@ var setPageStartToPageOn = function() {
 }
 var updateBook = function (state) {
   //get objects
-  var entryTaken = getActiveEntry();
+  var entryTaken = getEntryBySession();
   var bookTaken = getActiveBook();
   //update book
   //up num of pages
@@ -113,6 +113,10 @@ var updateBook = function (state) {
   changeEntryActiveState(entryTaken);
   //up pageOn 
   bookTaken.book.pageOn = entryTaken.pageEnd
+}
+
+var updateEdits = function (state){
+
 }
 
 
@@ -174,9 +178,9 @@ function renderEntriesWindow(title){
   //iterate over each entry and add them into an array
   var entryArrList = bookTaken.book.entries.map(function(entry) {
                   return `<div class="js-entry">
-                           <h3 class="entry_session"># ${entry.session}</h3><h3 class="entry_pages"> ,pages ${entry.pageStart} - ${entry.pageEnd}</h3>
+                           <h3># </h3><h3 class="entry_session">${entry.session}</h3> ,<h3 class="entry_pages">pages ${entry.pageStart} - ${entry.pageEnd}</h3>
                            <h4 class="entry_date">${entry.date}</h4>
-                           <p>${entry.content}</p>
+                           <p class="entry_content">${entry.content}</p>
                           </div>`
   })
   var render = `<div class="js-entires_container">
@@ -196,7 +200,6 @@ function renderEntryInputDetails(){
         return `<input type="number" id="start_page_num" required></input>`
       }
       else if (bookTaken.book.numOfEntries > 0) {
-      
           return `<input type="number" id="start_page_num" value="${bookTaken.book.pageOn}" readonly></input>`
       }
     })();
@@ -216,30 +219,113 @@ function renderEntryInputDetails(){
 function renderEntriesInput(){
   //get book object
   var bookTaken = getActiveBook();
-  var entryTaken = getActiveEntry();
+  var entryTaken = getEntryBySession();
   var startPage = entryTaken.pageStart;
   var endPage = entryTaken.pageEnd;
   var sessionNum = entryTaken.session;
   var entryDate = entryTaken.date;
   var entryContent = entryTaken.content
-  
+
   var sessionDetails = `<div class="js-session_details">
-                            <h3 class='session_num'>session #: ${sessionNum}</h3>
+                            <h3 class='session_num'>session #: <span class='session_num_num'>${sessionNum}</span></h3>
                             <h4 class='session_date'>${entryDate}</h4>
                             <h4>pages: ${startPage} - ${endPage}</h4>                 
                         </div>`
 
   var inputArea = `     <div class="js-text_input">
-                            <textarea class="text_input_area" value="${entryContent}"></textarea>
-                            <button class="btn-submit_text_input">+</button>
+                            <textarea class="text_input_area">${entryContent}</textarea>
                         </div>`
 
   var entryWindow = `<div class="js-input_window">
                         ${sessionDetails}
                         <hr>
                         ${inputArea}
+                        <button class="btn-submit_text_input">+</button>
                      </div>`
 
+  $('.container').html(entryWindow)
+}
+
+function renderEntriesEditInput(){
+  //get book object
+  var bookTaken = getActiveBook();
+  var entryTaken = getEntryBySession();
+  var startPage = entryTaken.pageStart;
+  var endPage = entryTaken.pageEnd;
+  var sessionNum = entryTaken.session;
+  var entryDate = entryTaken.date;
+  var entryContent = entryTaken.content
+
+  var sessionDetails = `<div class="js-session_details">
+                            <h3 class='session_num'>session #: <span class='session_num_num'>${sessionNum}</span></h3>
+                            <h4 class='session_date'>${entryDate}</h4>
+                            <h4>pages: ${startPage} - ${endPage}</h4>                 
+                        </div>`
+
+  var inputArea = `     <div class="js-text_input">
+                            <textarea class="text_input_area">${entryContent}</textarea>
+                        </div>`
+
+  var entryWindow = `<div class="js-input_window">
+                        ${sessionDetails}
+                        <hr>
+                        ${inputArea}
+                        <button class="btn-submit_text_input_edit">+</button>
+                     </div>`
+
+  $('.container').html(entryWindow)
+}
+
+// function renderEntriesInput(){
+//   //get book object
+//   var bookTaken = getActiveBook();
+//   var entryTaken = getActiveEntry();
+//   var startPage = entryTaken.pageStart;
+//   var endPage = entryTaken.pageEnd;
+//   var sessionNum = entryTaken.session;
+//   var entryDate = entryTaken.date;
+//   var entryContent = entryTaken.content
+
+//   var sessionDetails = `<div class="js-session_details">
+//                             <h3 class='session_num'>session #: ${sessionNum} </h3>
+//                             <h4 class='session_date'>${entryDate}</h4>
+//                             <h4>pages: ${startPage} - ${endPage}</h4>                 
+//                         </div>`
+
+//   var inputArea = `     <div class="js-text_input">
+//                             <textarea class="text_input_area" value="${entryContent}"></textarea>
+//                             <button class="btn-submit_text_input">+</button>
+//                         </div>`
+
+//   var entryWindow = `<div class="js-input_window">
+//                         ${sessionDetails}
+//                         <hr>
+//                         ${inputArea}
+//                      </div>`
+
+//   $('.container').html(entryWindow)
+// }
+
+function renderEntryView(sessionNum,pages,date,entryContent) {
+  var adjustedContent  = entryContent.replace(/\n/g, "<br>");
+  console.log(adjustedContent);
+  var sessionDetails = `<div class="js-view_session_details">
+                            <h3 class='session_num'>session # <span class='session_num_num'>${sessionNum}</span></h3>
+                            <h4 class='session_date'>${date}</h4>        
+                            <h4>${pages}</h4>
+                        </div>`
+
+  var contentArea = `<div class="js-view-text_display">
+                            <p>${adjustedContent}</p>
+                     </div>`
+
+  var entryWindow = `<div class="js-view_window">
+                        ${sessionDetails}
+                        <hr>
+                        ${contentArea}
+                        <button class="btn-edit_current_entry">Edit</button>
+                     </div>`
+                     
   $('.container').html(entryWindow)
 }
 
@@ -329,13 +415,45 @@ $('.container').on('click','.btn-submit_entry_details', function(e) {
 
 function handleSubmitEntryContent() {
 $('.container').on('click','.btn-submit_text_input', function(e) {
-    var title= $('.js-main_header').text();;
+    var title= $('.js-main_header').text();
     var content = $('.text_input_area').val();
     addEntryContent(state,content);
     updateBook(state);
     renderEntriesWindow(title)
   })
 }
+
+function handleEntryView() {
+$('.container').on('click','.js-entry', function(e) {
+    var sessionNum = $(this).find('.entry_session').text();
+    var pages = $(this).find('.entry_pages').text();
+    var date = $(this).find('.entry_date').text();
+    var entryContent = $(this).find('.entry_content').text();
+    renderEntryView(sessionNum,pages,date,entryContent);
+  })
+}
+
+function handleEntryEdit() {
+$('.container').on('click','.btn-edit_current_entry', function(e) {
+    getEntryBySession();
+    renderEntriesEditInput()
+  })
+}
+
+function handleSubmitEntryEdit() {
+$('.container').on('click','.btn-submit_text_input_edit', function(e) {
+    var title= $('.js-main_header').text();
+    var content = $('.text_input_area').val();
+    addEntryContent(state,content);
+    renderEntriesWindow(title)
+  })
+}
+
+// <div class="js-entry">
+//        <h3 class="entry_session"># ${entry.session}</h3><h3 class="entry_pages"> ,pages ${entry.pageStart} - ${entry.pageEnd}</h3>
+//       <h4 class="entry_date">${entry.date}</h4>
+//            <p>${entry.content}</p>
+//      </div>
 
 
 
@@ -381,6 +499,13 @@ var getActiveEntry = function() {
   return getActiveEntry
 }
 
+var getEntryBySession = function() {
+  var activeBookIndex = getActiveBook();
+  var entry = activeBookIndex.book.entries;
+  var activeSession = Number($('.session_num_num').text());
+  var getActiveEntry = entry.find(function (obj){ return obj.session === activeSession; });
+  return getActiveEntry
+}
 
 var getActiveBook = function() {
   var arr = state.booksAdded;
@@ -422,7 +547,10 @@ $(function() {
   handleBookSubmit();
   handleAddEntryDetails();
   handleAddEntry();
-  handleSubmitEntryContent()
+  handleSubmitEntryContent();
+  handleEntryView();
+  handleEntryEdit();
+  handleSubmitEntryEdit()
 })
 
 
