@@ -132,7 +132,16 @@ hr {
 }
 
 .js-entry {
+	max-height: 175px;
+	margin-bottom: 30px;
+	padding-bottom: 10px;
+	padding: 5px;
 	border: 1px solid grey;
+	overflow: hidden
+}
+
+.js-entry:hover {
+	cursor: pointer;
 }
 
 .js-entry h3 {
@@ -142,6 +151,10 @@ hr {
 
 .js-entry h4 {
 	margin-top: 5px;
+}
+
+div.js-entry_paragraph p{
+	margin: 0
 }
 
 .js-view_window {

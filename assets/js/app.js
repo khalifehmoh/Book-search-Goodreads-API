@@ -156,7 +156,6 @@ function renderEntriesWindow(title){
   $('.js-main_header').text(title);
   //get book object
   var bookTaken = getBookInHand(title);
-  console.log(bookTaken);
   //find the num of entries of the required book
   var getEntries = bookTaken.book.numOfEntries; 
   //if there's no entires
@@ -180,11 +179,14 @@ function renderEntriesWindow(title){
                   return `<div class="js-entry">
                            <h3># </h3><h3 class="entry_session">${entry.session}</h3> ,<h3 class="entry_pages">pages ${entry.pageStart} - ${entry.pageEnd}</h3>
                            <h4 class="entry_date">${entry.date}</h4>
-                           <p class="entry_content">${entry.content}</p>
+                           <div class="js-entry_paragraph">
+                             <p class="entry_content">${entry.content}</p>
+                           </div>
                           </div>`
   })
+  var joinedArray = entryArrList.join("");
   var render = `<div class="js-entires_container">
-                    ${entryArrList}
+                    ${joinedArray}
                     <button class="btn-add_entry">+</button>
                 </div>`
   $('.container').html(render)
@@ -246,6 +248,7 @@ function renderEntriesInput(){
   $('.container').html(entryWindow)
 }
 
+
 function renderEntriesEditInput(){
   //get book object
   var bookTaken = getActiveBook();
@@ -276,41 +279,12 @@ function renderEntriesEditInput(){
   $('.container').html(entryWindow)
 }
 
-// function renderEntriesInput(){
-//   //get book object
-//   var bookTaken = getActiveBook();
-//   var entryTaken = getActiveEntry();
-//   var startPage = entryTaken.pageStart;
-//   var endPage = entryTaken.pageEnd;
-//   var sessionNum = entryTaken.session;
-//   var entryDate = entryTaken.date;
-//   var entryContent = entryTaken.content
-
-//   var sessionDetails = `<div class="js-session_details">
-//                             <h3 class='session_num'>session #: ${sessionNum} </h3>
-//                             <h4 class='session_date'>${entryDate}</h4>
-//                             <h4>pages: ${startPage} - ${endPage}</h4>                 
-//                         </div>`
-
-//   var inputArea = `     <div class="js-text_input">
-//                             <textarea class="text_input_area" value="${entryContent}"></textarea>
-//                             <button class="btn-submit_text_input">+</button>
-//                         </div>`
-
-//   var entryWindow = `<div class="js-input_window">
-//                         ${sessionDetails}
-//                         <hr>
-//                         ${inputArea}
-//                      </div>`
-
-//   $('.container').html(entryWindow)
-// }
 
 function renderEntryView(sessionNum,pages,date,entryContent) {
   var adjustedContent  = entryContent.replace(/\n/g, "<br>");
-  console.log(adjustedContent);
+  
   var sessionDetails = `<div class="js-view_session_details">
-                            <h3 class='session_num'>session # <span class='session_num_num'>${sessionNum}</span></h3>
+                            <h3 class='session_num'>session #: <span class='session_num_num'>${sessionNum}</span></h3>
                             <h4 class='session_date'>${date}</h4>        
                             <h4>${pages}</h4>
                         </div>`
