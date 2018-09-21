@@ -94,6 +94,13 @@ var changeEntryActiveState = function(entryTaken){
   entryTaken.active = false
 }
 
+var changeBookActiveState = function(){
+  var item = state.booksAdded;
+  var arr = item.map(function(token) {
+    return token.book["isActive"] = false
+  })
+}
+
 
 var setPageStartToPageOn = function() {
   var entryTaken = getActiveEntry();
@@ -165,6 +172,8 @@ function renderEntriesWindow(title){
                     <h3 class="no_entry_message">${message}</h4>
                     <button class="btn-add_entry"> + </button>
                  </div>`
+    var backIcon = '<i class="back-home_page fas fa-arrow-left"></i>'
+    $('.handle').html(backIcon);
     $('.container').html(entry)
   }
   else {
@@ -189,8 +198,11 @@ function renderEntriesWindow(title){
                     ${joinedArray}
                     <button class="btn-add_entry">+</button>
                 </div>`
+  var backIcon = '<i class="back-home_page fas fa-arrow-left"></i>'
+  $('.handle').html(backIcon);
   $('.container').html(render)
 }
+
 
 function renderEntryInputDetails(){
     var bookTaken = getActiveBook();
@@ -303,6 +315,51 @@ function renderEntryView(sessionNum,pages,date,entryContent) {
   $('.container').html(entryWindow)
 }
 
+ function renderHomePage(){
+  //iterate over each book and add them into an array
+  var bookList = state.booksAdded.map(function(item) {
+                  return `<div class="js-book_detail">
+                            <img class="book_img" src="
+                            ${item.book.coverURL}">
+                            <div class="book_detail">
+                              <h2 class='book_detail_title'>${item.book.bookTitle}</h2>
+                              <hr>
+                              <h4 class='book_detail_progress'>progress: <span class="'book_detail_progress_num">%76</span></h4>
+                              <h4 class='book_detail_page'>p<span class="'book_detail_page_on_num">${item.book.pageOn}</span>/<span class="'book_detail_page_off_num">300</span></h4>
+                              <h4 class='book_detail_sessions'>sessions: <span class="'book_detail_sessions_num">${item.book.numOfEntries}</span></h4>
+                            </div>
+                          </div>`
+  })
+  var joinedArray = bookList.join("");
+  var render = `<div class="js-books_window">
+                    ${joinedArray}
+                    <button class="btn-add_book">add a new book</button>
+                </div>`
+  var mainNavIcon = '<i class="fas fa-bars"></i>'
+  $('.handle').html(mainNavIcon);
+  $('.container').html(render)
+}
+
+ function renderSearchPage(){
+  var render = `<div class="search_box">
+                  <form id="js-search_form">
+                    <label for="search-label">Search for your book:  </label>
+                    <input type="text" name="js-search_entry" id="js-search_entry" placeholder="title or author of the book">
+                    <button class="btn-search_book" type="submit">Search</button>
+                  </form>
+
+                  <ul class="js-results">
+                  <!--items will be added here-->
+                  </ul>
+                </div>`
+
+  var backIcon = '<i class="back-home_page fas fa-arrow-left"></i>'
+  $('.handle').html(backIcon);
+  $('.container').html(render)
+}
+
+
+
 
 
 
@@ -355,13 +412,22 @@ $('#js-search_form').submit(function(event){
   const query = $(this).find("#js-search_entry").val();
   $(this).find("#js-search_entry").val("");
   var adjustedQuery = encodeURIComponent(query)
-  console.log(adjustedQuery);
+  getDataFromAPI(adjustedQuery, renderData);
+  })
+}
+
+function handleSearchSubmit() {
+$('.container').on('submit','#js-search_form', function(e){
+  event.preventDefault();
+  const query = $(this).find("#js-search_entry").val();
+  $(this).find("#js-search_entry").val("");
+  var adjustedQuery = encodeURIComponent(query);
   getDataFromAPI(adjustedQuery, renderData);
   })
 }
 
 function handleBookSubmit() {
-$('ul').on('click','.js-result_title', function(e) {
+$('.container').on('click','.js-result_title', function(e) {
     var title = $(this).text();
     var coverURL = $('.js-result_thumb_img').attr('src');
     addBook(state,title,coverURL);
@@ -423,6 +489,21 @@ $('.container').on('click','.btn-submit_text_input_edit', function(e) {
   })
 }
 
+function handleBackHome() {
+$('.navbar').on('click','.back-home_page', function(e) {
+    $('.js-main_header').text('Reflect')
+    var bookTaken = getActiveBook();
+    changeBookActiveState(bookTaken);
+    renderHomePage();
+  })
+}
+
+function handleAddNewBook(){
+  $('.container').on('click','.btn-add_book', function(e) {
+    renderSearchPage();
+  })
+}
+
 // <div class="js-entry">
 //        <h3 class="entry_session"># ${entry.session}</h3><h3 class="entry_pages"> ,pages ${entry.pageStart} - ${entry.pageEnd}</h3>
 //       <h4 class="entry_date">${entry.date}</h4>
@@ -464,6 +545,13 @@ var getBookInHand = function(title) {
   var bookIndex = arr.findIndex(function (obj) { return obj.book.bookTitle === title; });
   var getBookInHand = state.booksAdded[bookIndex];
   return getBookInHand
+}
+
+var checkActiveBook = function(){
+  var books = state.booksAdded;
+  function hasValue (obj, key, value) {
+    return obj.book.hasOwnProperty(key) 
+  }
 }
 
 var getActiveEntry = function() {
@@ -524,7 +612,10 @@ $(function() {
   handleSubmitEntryContent();
   handleEntryView();
   handleEntryEdit();
-  handleSubmitEntryEdit()
+  handleSubmitEntryEdit();
+  handleBackHome();
+  handleAddNewBook();
+  handleSearchSubmit()
 })
 
 

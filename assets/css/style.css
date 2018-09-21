@@ -1,11 +1,6 @@
 
 
 
-hr {
-  margin-left: 0;
-  max-width: 720px;
-}
-
 .search_box {
   padding-top: 100px;
   padding-left: 100px
@@ -14,12 +9,7 @@ h3 {
   margin-bottom: 0
 }
 
-hr {
-  margin-left: 0;
-  max-width: 720px;
-  margin-bottom: 20px;
-  margin-top: 20px;
-}
+
 
 .show {
 	display: block
@@ -47,6 +37,7 @@ hr {
 	margin-right: 20px;
 	margin-left: 30px;
 	font-size: 25px;
+	cursor: pointer;
 }
 
 /*js-results*/
@@ -75,6 +66,13 @@ hr {
 
 .js-result_info_box h3 {
 	margin-top: 7px;
+}
+
+.js-result_info_box hr {
+  margin-left: 0;
+  max-width: 720px;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 /*entry window*/
@@ -161,4 +159,39 @@ div.js-entry_paragraph p{
 	margin-top:  100px;
 	margin-left:  50px;
 	margin-right: 50px;
+}
+
+.js-input_window hr {
+  max-width: 720px;
+}
+
+/*home page*/
+.js-books_window {
+	padding-top:  100px;
+	padding-left:  50px;
+	padding-right: 50px;
+}
+
+.js-book_detail {
+	border: 1px #aaaaaa solid;
+	background-color: lightgrey;
+	padding-left: 5px;
+	display: flex;
+	margin: 0;
+	margin-bottom: 20px;
+}
+
+.book_detail  {
+	width: 100%;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.book_detail hr {
+	width: 100%;
+	margin-right: 10px;
+}
+
+.book_img {
+	width: 155px;
 }
