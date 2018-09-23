@@ -34,6 +34,7 @@ var addBook = function (title, cover) {
       book : {
           bookTitle: title,
           coverURL: cover,
+          bookPages: 0,
           entries: [],
           pageOn: 1,
           numOfEntries: 0,
@@ -51,6 +52,7 @@ var addEntry = function(state, bookTaken){
   var startNum = Number($('#start_page_num').val());
   var endNum = Number($('#end_page_num').val());
   var getEntriesArray = bookTaken.book.entries;
+  var getBookPages = bookTaken.book.bookPages;
   var entryDetails = { 
     content: '', 
     session: getEntriesArray.length + 1,
@@ -62,8 +64,9 @@ var addEntry = function(state, bookTaken){
     })(),
     active: true
   }
-  if(startNum >= endNum || (startNum <= 0 || endNum <= 0 )) {
-        $('.pages_error').toggleClass('hidden');
+  if(startNum >= endNum || (startNum <= 0 || endNum <= 0 ) || endNum > getBookPages) {
+        $('.pages_error').removeClass('hidden');
+        $('.pages_error').addClass('show');
       }
   else if (startNum < endNum || (startNum >= 0 || endNum >= 0)) {
         $('.pages_error').addClass('hidden');
@@ -122,8 +125,17 @@ var updateBook = function () {
   bookTaken.book.pageOn = entryTaken.pageEnd
 }
 
-var updateEdits = function (state){
-
+var updateBookPagesNum = function(pages) {
+  var bookTaken = getActiveBook();
+   if(pages < 10) {
+        $('.pages_error').removeClass('hidden');
+        $('.pages_error').addClass('show');
+      }
+   else if (pages > 10) {
+        $('.pages_error').addClass('hidden');
+        bookTaken.book.bookPages = pages;
+        renderEntryInputDetails()
+    }
 }
 
 
@@ -170,7 +182,7 @@ function renderEntriesWindow(title){
     var message = "look's like you have no entries yet, start by adding one here: ";
     var entry = `<div class="js-no_entry">
                     <h3 class="no_entry_message">${message}</h4>
-                    <button class="btn-add_entry"> + </button>
+                    <button class="btn-view_book_pages"> + </button>
                  </div>`
     var backIcon = '<i class="back-home_page fas fa-arrow-left"></i>'
     $('.handle').html(backIcon);
@@ -244,7 +256,7 @@ function renderEntriesInput(){
   var sessionDetails = `<div class="js-session_details">
                             <h3 class='session_num'>session #: <span class='session_num_num'>${sessionNum}</span></h3>
                             <h4 class='session_date'>${entryDate}</h4>
-                            <h4>pages: ${startPage} - ${endPage}</h4>                 
+                            <h4>pages ${startPage} - ${endPage}</h4>                 
                         </div>`
 
   var inputArea = `     <div class="js-text_input">
@@ -275,7 +287,7 @@ function renderEntriesEditInput(){
   var sessionDetails = `<div class="js-session_details">
                             <h3 class='session_num'>session #: <span class='session_num_num'>${sessionNum}</span></h3>
                             <h4 class='session_date'>${entryDate}</h4>
-                            <h4>pages: ${startPage} - ${endPage}</h4>                 
+                            <h4>pages ${startPage} - ${endPage}</h4>                 
                         </div>`
 
   var inputArea = `     <div class="js-text_input">
@@ -323,14 +335,18 @@ function renderEntryView(sessionNum,pages,date,entryContent) {
  function renderHomePage(){
   //iterate over each book and add them into an array
   var bookList = state.booksAdded.map(function(item) {
+                  var pageOn = item.book.pageOn;
+                  var pageOff = item.book.bookPages;
+                  var progress = pageOn/pageOff * 100;
+
                   return `<div class="js-book_detail">
                             <img class="book_img" src="
                             ${item.book.coverURL}">
                             <div class="book_detail">
                               <h2 class='book_detail_title'>${item.book.bookTitle}</h2>
                               <hr>
-                              <h4 class='book_detail_progress'>progress: <span class="'book_detail_progress_num">%76</span></h4>
-                              <h4 class='book_detail_page'>p<span class="'book_detail_page_on_num">${item.book.pageOn}</span>/<span class="'book_detail_page_off_num">300</span></h4>
+                              <h4 class='book_detail_progress'>progress: %<span class="'book_detail_progress_num">${Math.ceil(progress)}</span></h4>
+                              <h4 class='book_detail_page'>p<span class="'book_detail_page_on_num">${item.book.pageOn}</span>/<span class="'book_detail_page_off_num">${item.book.bookPages}</span></h4>
                               <h4 class='book_detail_sessions'>sessions: <span class="'book_detail_sessions_num">${item.book.numOfEntries}</span></h4>
                             </div>
                           </div>`
@@ -362,6 +378,23 @@ function renderEntryView(sessionNum,pages,date,entryContent) {
   $('.handle').html(backIcon);
   $('.container').html(render)
 }
+
+ function renderBookPagesNum(){
+  var render = `<div class="page_num_box">
+                  <form id="js-book_page_insert">
+                    <label for="search-label">How many pages in the book? </label>
+                    <input type="number" name="js-book_page_insert_num" id="js-book_page_insert_num" placeholder="enter a number">
+                    <button class="btn-add_book_pages" type="submit">OK</button>
+                    <span class="pages_error hidden">check the number of pages</span>
+                  </form>
+                </div>`
+
+  var backIcon = '<i class="back-home_page fas fa-arrow-left"></i>'
+  $('.handle').html(backIcon);
+  $('.container').html(render)
+}
+
+
 
 
 
@@ -447,6 +480,31 @@ $('.container').on('click','.btn-add_entry', function(e) {
     renderEntryInputDetails();
   })
 }
+
+//book page handle
+function handleBookPagesNum() {
+$('.container').on('click','.btn-view_book_pages', function(e) {
+  var bookTaken = getActiveBook();
+    if (bookTaken.book.bookPages === 0) {
+      renderBookPagesNum();
+    }
+    else {
+      renderEntryInputDetails()
+    }
+    
+  })
+}
+
+function handleSubmitBookPagesNum() {
+$('.container').on('submit','#js-book_page_insert', function(e) {
+    e.preventDefault();
+    const pages = $(this).find("#js-book_page_insert_num").val();
+    var adjustPages = Number(pages);
+    updateBookPagesNum(adjustPages);
+  })
+}
+
+
 
 function handleAddEntry() {
 $('.container').on('click','.btn-submit_entry_details', function(e) {
@@ -653,7 +711,9 @@ $(function() {
   handleAddNewBook();
   handleSearchSubmit();
   handleViewBookEntries();
-  handleBackEntries()
+  handleBackEntries();
+  handleBookPagesNum();
+  handleSubmitBookPagesNum()
 })
 
 
