@@ -29,7 +29,7 @@ function getDataFromAPI(searchTerm, callback) {
 
 
 //state fun
-var addBook = function (state, title, cover) {
+var addBook = function (title, cover) {
   var item = {
       book : {
           bookTitle: title,
@@ -75,12 +75,12 @@ var addEntry = function(state, bookTaken){
     }
 }
 
-var addEntryContent = function(state, content){
+var addEntryContent = function(content){
   var getEntry = getEntryBySession();
   getEntry.content = content;
 }
 
-var changeIsActiveState = function(title){;
+var changeIsActiveTrue = function(title){;
   var bookTaken = getBookInHand(title);
   // var oldList = JSON.parse(localStorage.bookList) || [];
   // var bookInHand = oldList[bookIndex];
@@ -89,17 +89,17 @@ var changeIsActiveState = function(title){;
   //oldList.push(bookTaken);
   // localStorage.setItem('bookList', JSON.stringify(oldList));  
 }
-
-var changeEntryActiveState = function(entryTaken){
-  entryTaken.active = false
-}
-
-var changeBookActiveState = function(){
+var changeBookActiveFalse = function(){
   var item = state.booksAdded;
   var arr = item.map(function(token) {
     return token.book["isActive"] = false
   })
 }
+
+var changeEntryActiveState = function(entryTaken){
+  entryTaken.active = false
+}
+
 
 
 var setPageStartToPageOn = function() {
@@ -107,7 +107,7 @@ var setPageStartToPageOn = function() {
   var bookTaken = getActiveBook();
   entryTaken.pageStart = bookTaken.book.pageOn
 }
-var updateBook = function (state) {
+var updateBook = function () {
   //get objects
   var entryTaken = getEntryBySession();
   var bookTaken = getActiveBook();
@@ -225,8 +225,9 @@ function renderEntryInputDetails(){
                     <span class="pages_error hidden">check the pages</span>
                     <span> to </span><input type="number" id="end_page_num" required></input>
                     <button type="submit" class="btn-submit_entry_details">Add entry</button>                    
-                </form>`;
-
+                </form>`
+    var backIcon = '<i class="back-entries_page fas fa-arrow-left"></i>'
+    $('.handle').html(backIcon)
     $('.container').html(form)
 }
 
@@ -288,6 +289,8 @@ function renderEntriesEditInput(){
                         <button class="btn-submit_text_input_edit">+</button>
                      </div>`
 
+  var backIcon = '<i class="back-entries_page fas fa-arrow-left"></i>'
+  $('.handle').html(backIcon); 
   $('.container').html(entryWindow)
 }
 
@@ -311,7 +314,9 @@ function renderEntryView(sessionNum,pages,date,entryContent) {
                         ${contentArea}
                         <button class="btn-edit_current_entry">Edit</button>
                      </div>`
-                     
+
+  var backIcon = '<i class="back-entries_page fas fa-arrow-left"></i>'
+  $('.handle').html(backIcon);     
   $('.container').html(entryWindow)
 }
 
@@ -429,10 +434,11 @@ $('.container').on('submit','#js-search_form', function(e){
 function handleBookSubmit() {
 $('.container').on('click','.js-result_title', function(e) {
     var title = $(this).text();
-    var coverURL = $('.js-result_thumb_img').attr('src');
-    addBook(state,title,coverURL);
+    var coverURL = $(this).closest('.js-search_result').find('.js-result_thumb_img').attr('src');
+    console.log(coverURL)
+    addBook(title,coverURL);
     renderEntriesWindow(title);
-    changeIsActiveState(title);
+    changeIsActiveTrue(title);
   })
 }
 
@@ -448,7 +454,7 @@ $('.container').on('click','.btn-submit_entry_details', function(e) {
     var bookTaken = getActiveBook();
     addEntry(state, bookTaken);
     var entryTaken = getActiveEntry();
-    //updateBook(state, bookTaken, entryTaken);
+    updateBook();
     renderEntriesInput()
   })
 }
@@ -457,8 +463,7 @@ function handleSubmitEntryContent() {
 $('.container').on('click','.btn-submit_text_input', function(e) {
     var title= $('.js-main_header').text();
     var content = $('.text_input_area').val();
-    addEntryContent(state,content);
-    updateBook(state);
+    addEntryContent(content);
     renderEntriesWindow(title)
   })
 }
@@ -484,17 +489,8 @@ function handleSubmitEntryEdit() {
 $('.container').on('click','.btn-submit_text_input_edit', function(e) {
     var title= $('.js-main_header').text();
     var content = $('.text_input_area').val();
-    addEntryContent(state,content);
+    addEntryContent(content);
     renderEntriesWindow(title)
-  })
-}
-
-function handleBackHome() {
-$('.navbar').on('click','.back-home_page', function(e) {
-    $('.js-main_header').text('Reflect')
-    var bookTaken = getActiveBook();
-    changeBookActiveState(bookTaken);
-    renderHomePage();
   })
 }
 
@@ -504,11 +500,43 @@ function handleAddNewBook(){
   })
 }
 
-// <div class="js-entry">
-//        <h3 class="entry_session"># ${entry.session}</h3><h3 class="entry_pages"> ,pages ${entry.pageStart} - ${entry.pageEnd}</h3>
-//       <h4 class="entry_date">${entry.date}</h4>
-//            <p>${entry.content}</p>
-//      </div>
+function handleViewBookEntries() {
+$('.container').on('click','.book_detail_title', function(e) {
+    var title= $(this).text();
+    changeIsActiveTrue(title);
+    renderEntriesWindow(title)
+  })
+}
+
+
+
+//navigation listeners
+function handleBackHome() {
+$('.navbar').on('click','.back-home_page', function(e) {
+    $('.js-main_header').text('Reflect')
+    var bookTaken = getActiveBook();
+    changeBookActiveFalse(bookTaken);
+    renderHomePage();
+  })
+}
+
+function handleBackEntries() {
+$('.navbar').on('click','.back-entries_page', function(e) {
+    var bookTaken = getActiveBook();
+    var title = bookTaken.book.bookTitle;
+    renderEntriesWindow(title)
+  })
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -604,6 +632,14 @@ var getDate = function(){
 
 
 
+
+
+
+
+
+
+
+
 $(function() {
   handleFormSubmit();
   handleBookSubmit();
@@ -615,7 +651,9 @@ $(function() {
   handleSubmitEntryEdit();
   handleBackHome();
   handleAddNewBook();
-  handleSearchSubmit()
+  handleSearchSubmit();
+  handleViewBookEntries();
+  handleBackEntries()
 })
 
 

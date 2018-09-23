@@ -163,6 +163,9 @@ div.js-entry_paragraph p{
 
 .js-input_window hr {
   max-width: 720px;
+  margin-left: 0;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 /*home page*/
@@ -194,4 +197,8 @@ div.js-entry_paragraph p{
 
 .book_img {
 	width: 155px;
+}
+
+.book_detail_title{
+	cursor: pointer;
 }
