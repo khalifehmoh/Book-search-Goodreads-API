@@ -23,7 +23,7 @@ textarea:focus {
 
 button {
 	cursor: pointer;
-	background-color: rgb( 232, 90, 79 );
+	background-color: #E85A4F;
     border-radius: 25px;
 	border: none;
 	padding: 10px;
@@ -31,15 +31,21 @@ button {
 	color: white;
 }
 
+button:hover {
+	transition: 0.2s all;
+	background-color: #ec8179;
+}
+
+button:focus {
+	outline: 0;
+}
+
+
 .btn-main {
 	background-color: rgb( 232, 90, 79 );
 	box-shadow: 2.5px 4.33px 5px 0px rgba( 0, 0, 0, 0.5);
-	position: absolute;
     width: 200px;
     height: 70px;
-	top: 220px;
-	left: 838px;
-    z-index: 2;
 	border-radius: 25px 0 0 25px;
 	border: none;
 /*	text*/
@@ -47,19 +53,17 @@ button {
 	font-size: 20px
 }
 
-.Rounded_Rectangle_1 {
-  background-color: rgb( 232, 90, 79 );
-  box-shadow: 2.5px 4.33px 5px 0px rgb( 0, 0, 0 );
-  position: absolute;
-  left: 1564px;
-  top: 812px;
-  width: 284px;
-  height: 84px;
-  z-index: 46;
+.btn-main {
+	position: fixed;
+	top: 800px;
+	right: 50px;
+	z-index: 8
 }
 
-
-
+.fa-plus:before {
+	margin-left: 3px;
+	font-size: 23px;
+}
 
 ::placeholder {
 	
@@ -194,4 +198,8 @@ input#end_page_num{
 .js-entires_container {
 	margin-right: 4.5%
 }
+
+/**/
+
+
 

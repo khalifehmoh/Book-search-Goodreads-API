@@ -127,7 +127,7 @@ var updateBook = function () {
 
 var updateBookPagesNum = function(pages) {
   var bookTaken = getActiveBook();
-   if(pages < 10) {
+   if(pages <= 10) {
         $('.pages_error').removeClass('hidden');
         $('.pages_error').addClass('show');
       }
@@ -185,18 +185,18 @@ function renderEntriesWindow(title){
     var message = "look's like you have no entries yet, start by adding one";
     var entry = `<div class="js-no_entry">
                     <h3 class="no_entry_message">${message}</h4>
-                    <button class="btn-view_book_pages"> Add Session </button>
                  </div>`
+    var button = `<button class="btn-view_book_pages btn-main"> Add Session  <i class="fa fa-plus" aria-hidden="true"></i></button>`
     var backIcon = '<i class="back-home_page fas fa-arrow-left"></i>'
     $('.handle').html(backIcon);
-    $('.contents').html(entry)
+    $('.contents').html(entry);
+    $('.main_button').html(button);
+
   }
   else {
     renderEntriesList();
   }
 }
-
- // <i class="far fa-plus"></i>
 
  function renderEntriesList(){
   var bookTaken = getActiveBook();
@@ -213,11 +213,12 @@ function renderEntriesWindow(title){
   var joinedArray = entryArrList.join("");
   var render = `<div class="js-entires_container">
                     ${joinedArray}
-                    <button class="btn-add_entry">Add Session +</button>
                 </div>`
   var backIcon = '<i class="back-home_page fas fa-arrow-left"></i>'
+  var button = `<button class="btn-add_entry btn-main">Add Session <i class="fa fa-plus" aria-hidden="true"></button>`
   $('.handle').html(backIcon);
-  $('.contents').html(render)
+  $('.contents').html(render);
+  $('.main_button').html(button);
 }
 
 
@@ -244,14 +245,14 @@ function renderEntryInputDetails(){
                       <span> to </span><input type="number" id="end_page_num" required></input> 
                     </div>
                     <span class="pages_error hidden">check the pages</span>
-                    <button type="submit" class="btn-submit_entry_details">Add entry</button>                
+                    <button type="submit" class="btn-submit_entry_details btn-main">Add entry</button>                
                 </form>`
-    var backIcon = '<i class="back-entries_page fas fa-arrow-left"></i>'
+    var backIcon = '<i class="back-entries_page fas fa-arrow-left"></i>';
+    var button = `<button type="submit" class="btn-submit_entry_details btn-main">Add entry <i class="fa fa-plus" aria-hidden="true"></button>`
     $('.handle').html(backIcon)
-    $('.contents').html(form)
+    $('.contents').html(form);
+    $('.main_button').html(button);
 }
-
-// <button type="submit" class="btn-submit_entry_details">Add entry</button>
 
 function renderEntriesInput(){
   //get book object
@@ -277,10 +278,10 @@ function renderEntriesInput(){
                         ${sessionDetails}
                         <hr>
                         ${inputArea}
-                        <button class="btn-submit_text_input">OK</button>
                      </div>`
-
-  $('.contents').html(entryWindow)
+  var button = `<button class="btn-submit_text_input btn-main">OK</button>`
+  $('.contents').html(entryWindow);
+  $('.main_button').html(button);
 }
 
 
@@ -308,12 +309,14 @@ function renderEntriesEditInput(){
                         ${sessionDetails}
                         <hr>
                         ${inputArea}
-                        <button class="btn-submit_text_input_edit">+</button>
+                        
                      </div>`
 
   var backIcon = '<i class="back-entries_page fas fa-arrow-left"></i>'
+  var button = `<button class="btn-submit_text_input_edit btn-main">+</button>`
   $('.handle').html(backIcon); 
-  $('.contents').html(entryWindow)
+  $('.contents').html(entryWindow);
+  $('.main_button').html(button);
 }
 
 
@@ -334,12 +337,14 @@ function renderEntryView(sessionNum,pages,date,entryContent) {
                         ${sessionDetails}
                         <hr>
                         ${contentArea}
-                        <button class="btn-edit_current_entry">Edit</button>
+                        
                      </div>`
 
   var backIcon = '<i class="back-entries_page fas fa-arrow-left"></i>'
+  var button = `<button class="btn-edit_current_entry btn-main">Edit</button>`
   $('.handle').html(backIcon);     
-  $('.contents').html(entryWindow)
+  $('.contents').html(entryWindow);
+  $('.main_button').html(button);
 }
 
  function renderHomePage(){
@@ -364,11 +369,12 @@ function renderEntryView(sessionNum,pages,date,entryContent) {
   var joinedArray = bookList.join("");
   var render = `<div class="js-books_window">
                     ${joinedArray}
-                    <button class="btn-add_book">add a new book</button>
                 </div>`
   var mainNavIcon = '<i class="fas fa-bars"></i>'
+  var button = `<button class="btn-add_book btn-main">Add a book <i class="fa fa-plus" aria-hidden="true"></button>`
   $('.handle').html(mainNavIcon);
-  $('.contents').html(render)
+  $('.contents').html(render);
+  $('.main_button').html(button);
 }
 
  function renderSearchPage(){
@@ -397,14 +403,16 @@ function renderEntryView(sessionNum,pages,date,entryContent) {
                   <form id="js-book_page_insert">
                     <label for="search-label">How many pages in the book? </label>
                     <input type="number" name="js-book_page_insert_num" id="js-book_page_insert_num" placeholder="enter a number">
-                    <button class="btn-add_book_pages" type="submit">OK</button>
+                    <button class="btn-add_book_pages btn-main" type="submit">OK</button>
                     <span class="pages_error hidden">check the number of pages</span>
                   </form>
                 </div>`
 
-  var backIcon = '<i class="back-home_page fas fa-arrow-left"></i>'
+  var backIcon = '<i class="back-home_page fas fa-arrow-left"></i>';
+  var button = `<button class="btn-add_book_pages btn-main" type="submit">OK</button>`
   $('.handle').html(backIcon);
-  $('.contents').html(render)
+  $('.contents').html(render);
+  $('.main_button').html(button);
 }
 
 
@@ -489,14 +497,14 @@ $('.contents').on('click','.js-result_title', function(e) {
 }
 
 function handleAddEntryDetails() {
-$('.contents').on('click','.btn-add_entry', function(e) {
+$('.main_button').on('click','.btn-add_entry', function(e) {
     renderEntryInputDetails();
   })
 }
 
 //book page handle
 function handleBookPagesNum() {
-$('.contents').on('click','.btn-view_book_pages', function(e) {
+$('.main_button').on('click','.btn-view_book_pages', function(e) {
   var bookTaken = getActiveBook();
     if (bookTaken.book.bookPages === 0) {
       renderBookPagesNum();
@@ -531,13 +539,15 @@ $('.contents').on('submit','#js-entry_details', function(e) {
 }
 
 function handleSubmitEntryContent() {
-$('.contents').on('click','.btn-submit_text_input', function(e) {
+$('.main_button').on('click','.btn-submit_text_input', function(e) {
     var title= $('.js-main_header').text();
     var content = $('.text_input_area').val();
     addEntryContent(content);
     renderEntriesWindow(title)
   })
 }
+
+//
 
 function handleEntryView() {
 $('.contents').on('click','.js-entry', function(e) {
@@ -550,14 +560,14 @@ $('.contents').on('click','.js-entry', function(e) {
 }
 
 function handleEntryEdit() {
-$('.contents').on('click','.btn-edit_current_entry', function(e) {
+$('.main_button').on('click','.btn-edit_current_entry', function(e) {
     getEntryBySession();
     renderEntriesEditInput()
   })
 }
 
 function handleSubmitEntryEdit() {
-$('.contents').on('click','.btn-submit_text_input_edit', function(e) {
+$('.main_button').on('click','.btn-submit_text_input_edit', function(e) {
     var title= $('.js-main_header').text();
     var content = $('.text_input_area').val();
     addEntryContent(content);
@@ -566,7 +576,7 @@ $('.contents').on('click','.btn-submit_text_input_edit', function(e) {
 }
 
 function handleAddNewBook(){
-  $('.contents').on('click','.btn-add_book', function(e) {
+  $('.main_button').on('click','.btn-add_book', function(e) {
     renderSearchPage();
   })
 }

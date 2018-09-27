@@ -176,16 +176,6 @@ div.js-entry_paragraph p{
   width: 75%
 }
 
-.btn-submit_entry_details{
-	margin-left: 10px;
-	margin-top: 20px;
-}
-
-.btn-view_book_pages{
-	margin-top: 15px;
-	width: 140px;
-}
-
 /*home page*/
 .js-books_window {
 	padding-top:  100px;
@@ -219,5 +209,23 @@ div.js-entry_paragraph p{
 .book_detail_title{
 	margin-top: 4px;
 	margin-bottom: 4px;
-	cursor: pointer;
+	cursor: pointer;;
 }
+
+.book_detail_title {
+	overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.js-main_header{
+	overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+.js-result_thumb_img {
+	max-width: 98px;
+}
+
