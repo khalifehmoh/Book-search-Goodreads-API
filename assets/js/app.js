@@ -157,8 +157,9 @@ var updateBookPagesNum = function(pages) {
 //render fun.
 function renderResult(result){
   return `
-    <li class="js-search_result">
-      <a class="js-result_thumb" href="https://www.goodreads.com/book/show/${result.best_book.id.content}" target="_blank" ><img class="js-result_thumb_img" src="${result.best_book.image_url}"></a>
+   <div class="row"> 
+    <li class="col-12 js-search_result">
+      <img class="js-result_thumb_img" src="${result.best_book.image_url}"></a>
       <br>
       <div class="js-result_info_box">
         <h3 class="js-result_title">${result.best_book.title}</h3>
@@ -170,6 +171,8 @@ function renderResult(result){
   `;
 }
 
+// <a class="js-result_thumb" href="https://www.goodreads.com/book/show/${result.best_book.id.content}" target="_blank" >
+
 function renderEntriesWindow(title){
   //change header to book title 
   $('.js-main_header').text(title);
@@ -179,26 +182,28 @@ function renderEntriesWindow(title){
   var getEntries = bookTaken.book.numOfEntries; 
   //if there's no entires
   if (getEntries === 0) {
-    var message = "look's like you have no entries yet, start by adding one here: ";
+    var message = "look's like you have no entries yet, start by adding one";
     var entry = `<div class="js-no_entry">
                     <h3 class="no_entry_message">${message}</h4>
-                    <button class="btn-view_book_pages"> + </button>
+                    <button class="btn-view_book_pages"> Add Session </button>
                  </div>`
     var backIcon = '<i class="back-home_page fas fa-arrow-left"></i>'
     $('.handle').html(backIcon);
-    $('.container').html(entry)
+    $('.contents').html(entry)
   }
   else {
     renderEntriesList();
   }
 }
 
+ // <i class="far fa-plus"></i>
+
  function renderEntriesList(){
   var bookTaken = getActiveBook();
   //iterate over each entry and add them into an array
   var entryArrList = bookTaken.book.entries.map(function(entry) {
                   return `<div class="js-entry">
-                           <h3># </h3><h3 class="entry_session">${entry.session}</h3> ,<h3 class="entry_pages">pages ${entry.pageStart} - ${entry.pageEnd}</h3>
+                           <h3># </h3><h3 class="entry_session">${entry.session}</h3> ,<h3 class="entry_pages">p${entry.pageStart} - ${entry.pageEnd}</h3>
                            <h4 class="entry_date">${entry.date}</h4>
                            <div class="js-entry_paragraph">
                              <p class="entry_content">${entry.content}</p>
@@ -208,11 +213,11 @@ function renderEntriesWindow(title){
   var joinedArray = entryArrList.join("");
   var render = `<div class="js-entires_container">
                     ${joinedArray}
-                    <button class="btn-add_entry">+</button>
+                    <button class="btn-add_entry">Add Session +</button>
                 </div>`
   var backIcon = '<i class="back-home_page fas fa-arrow-left"></i>'
   $('.handle').html(backIcon);
-  $('.container').html(render)
+  $('.contents').html(render)
 }
 
 
@@ -231,17 +236,22 @@ function renderEntryInputDetails(){
     })();
 
     var form = `<form id="js-entry_details">
-                    <h3 class='session_num'>session #: <span class='session_num_num'>${getEntries} </span></h3>
-                    <h4 class='session_date'>${getDate()}</h4>
-                    <span>pages from </span>${checkEntry}
+                    <h2 class='session_details_header'>Session details</h4>
+                    <div class='session_box'>
+                      <h3 class='session_num'>session #: <span class='session_num_num'>${getEntries} </span></h3>
+                      <h4 class='session_date'>${getDate()}</h4>
+                      <span>pages from </span>${checkEntry}
+                      <span> to </span><input type="number" id="end_page_num" required></input> 
+                    </div>
                     <span class="pages_error hidden">check the pages</span>
-                    <span> to </span><input type="number" id="end_page_num" required></input>
-                    <button type="submit" class="btn-submit_entry_details">Add entry</button>                    
+                    <button type="submit" class="btn-submit_entry_details">Add entry</button>                
                 </form>`
     var backIcon = '<i class="back-entries_page fas fa-arrow-left"></i>'
     $('.handle').html(backIcon)
-    $('.container').html(form)
+    $('.contents').html(form)
 }
+
+// <button type="submit" class="btn-submit_entry_details">Add entry</button>
 
 function renderEntriesInput(){
   //get book object
@@ -267,10 +277,10 @@ function renderEntriesInput(){
                         ${sessionDetails}
                         <hr>
                         ${inputArea}
-                        <button class="btn-submit_text_input">+</button>
+                        <button class="btn-submit_text_input">OK</button>
                      </div>`
 
-  $('.container').html(entryWindow)
+  $('.contents').html(entryWindow)
 }
 
 
@@ -303,7 +313,7 @@ function renderEntriesEditInput(){
 
   var backIcon = '<i class="back-entries_page fas fa-arrow-left"></i>'
   $('.handle').html(backIcon); 
-  $('.container').html(entryWindow)
+  $('.contents').html(entryWindow)
 }
 
 
@@ -329,7 +339,7 @@ function renderEntryView(sessionNum,pages,date,entryContent) {
 
   var backIcon = '<i class="back-entries_page fas fa-arrow-left"></i>'
   $('.handle').html(backIcon);     
-  $('.container').html(entryWindow)
+  $('.contents').html(entryWindow)
 }
 
  function renderHomePage(){
@@ -358,25 +368,28 @@ function renderEntryView(sessionNum,pages,date,entryContent) {
                 </div>`
   var mainNavIcon = '<i class="fas fa-bars"></i>'
   $('.handle').html(mainNavIcon);
-  $('.container').html(render)
+  $('.contents').html(render)
 }
 
  function renderSearchPage(){
-  var render = `<div class="search_box">
-                  <form id="js-search_form">
-                    <label for="search-label">Search for your book:  </label>
-                    <input type="text" name="js-search_entry" id="js-search_entry" placeholder="title or author of the book">
-                    <button class="btn-search_book" type="submit">Search</button>
-                  </form>
-
-                  <ul class="js-results">
-                  <!--items will be added here-->
-                  </ul>
-                </div>`
+  var render = `<div class="container-fluid">
+                  <div class="row search_box">
+                    <form id="js-search_form">
+                      <label for="search-label">Search for your book:  </label>
+                      <input type="text" name="js-search_entry" id="js-search_entry" placeholder="title or author of the book">
+                    </form>
+                  </div>
+                  <div class="container-fluid">
+                    <hr class="search_box_break">
+                    <ul class="js-results">
+                    <!--items will be added here-->
+                    </ul>
+                  </div>
+               </div>`
 
   var backIcon = '<i class="back-home_page fas fa-arrow-left"></i>'
   $('.handle').html(backIcon);
-  $('.container').html(render)
+  $('.contents').html(render)
 }
 
  function renderBookPagesNum(){
@@ -391,7 +404,7 @@ function renderEntryView(sessionNum,pages,date,entryContent) {
 
   var backIcon = '<i class="back-home_page fas fa-arrow-left"></i>'
   $('.handle').html(backIcon);
-  $('.container').html(render)
+  $('.contents').html(render)
 }
 
 
@@ -455,7 +468,7 @@ $('#js-search_form').submit(function(event){
 }
 
 function handleSearchSubmit() {
-$('.container').on('submit','#js-search_form', function(e){
+$('.contents').on('submit','#js-search_form', function(e){
   event.preventDefault();
   const query = $(this).find("#js-search_entry").val();
   $(this).find("#js-search_entry").val("");
@@ -465,7 +478,7 @@ $('.container').on('submit','#js-search_form', function(e){
 }
 
 function handleBookSubmit() {
-$('.container').on('click','.js-result_title', function(e) {
+$('.contents').on('click','.js-result_title', function(e) {
     var title = $(this).text();
     var coverURL = $(this).closest('.js-search_result').find('.js-result_thumb_img').attr('src');
     console.log(coverURL)
@@ -476,14 +489,14 @@ $('.container').on('click','.js-result_title', function(e) {
 }
 
 function handleAddEntryDetails() {
-$('.container').on('click','.btn-add_entry', function(e) {
+$('.contents').on('click','.btn-add_entry', function(e) {
     renderEntryInputDetails();
   })
 }
 
 //book page handle
 function handleBookPagesNum() {
-$('.container').on('click','.btn-view_book_pages', function(e) {
+$('.contents').on('click','.btn-view_book_pages', function(e) {
   var bookTaken = getActiveBook();
     if (bookTaken.book.bookPages === 0) {
       renderBookPagesNum();
@@ -496,7 +509,7 @@ $('.container').on('click','.btn-view_book_pages', function(e) {
 }
 
 function handleSubmitBookPagesNum() {
-$('.container').on('submit','#js-book_page_insert', function(e) {
+$('.contents').on('submit','#js-book_page_insert', function(e) {
     e.preventDefault();
     const pages = $(this).find("#js-book_page_insert_num").val();
     var adjustPages = Number(pages);
@@ -507,7 +520,7 @@ $('.container').on('submit','#js-book_page_insert', function(e) {
 
 
 function handleAddEntry() {
-$('.container').on('click','.btn-submit_entry_details', function(e) {
+$('.contents').on('submit','#js-entry_details', function(e) {
     e.preventDefault();
     var bookTaken = getActiveBook();
     addEntry(state, bookTaken);
@@ -518,7 +531,7 @@ $('.container').on('click','.btn-submit_entry_details', function(e) {
 }
 
 function handleSubmitEntryContent() {
-$('.container').on('click','.btn-submit_text_input', function(e) {
+$('.contents').on('click','.btn-submit_text_input', function(e) {
     var title= $('.js-main_header').text();
     var content = $('.text_input_area').val();
     addEntryContent(content);
@@ -527,7 +540,7 @@ $('.container').on('click','.btn-submit_text_input', function(e) {
 }
 
 function handleEntryView() {
-$('.container').on('click','.js-entry', function(e) {
+$('.contents').on('click','.js-entry', function(e) {
     var sessionNum = $(this).find('.entry_session').text();
     var pages = $(this).find('.entry_pages').text();
     var date = $(this).find('.entry_date').text();
@@ -537,14 +550,14 @@ $('.container').on('click','.js-entry', function(e) {
 }
 
 function handleEntryEdit() {
-$('.container').on('click','.btn-edit_current_entry', function(e) {
+$('.contents').on('click','.btn-edit_current_entry', function(e) {
     getEntryBySession();
     renderEntriesEditInput()
   })
 }
 
 function handleSubmitEntryEdit() {
-$('.container').on('click','.btn-submit_text_input_edit', function(e) {
+$('.contents').on('click','.btn-submit_text_input_edit', function(e) {
     var title= $('.js-main_header').text();
     var content = $('.text_input_area').val();
     addEntryContent(content);
@@ -553,13 +566,13 @@ $('.container').on('click','.btn-submit_text_input_edit', function(e) {
 }
 
 function handleAddNewBook(){
-  $('.container').on('click','.btn-add_book', function(e) {
+  $('.contents').on('click','.btn-add_book', function(e) {
     renderSearchPage();
   })
 }
 
 function handleViewBookEntries() {
-$('.container').on('click','.book_detail_title', function(e) {
+$('.contents').on('click','.book_detail_title', function(e) {
     var title= $(this).text();
     changeIsActiveTrue(title);
     renderEntriesWindow(title)

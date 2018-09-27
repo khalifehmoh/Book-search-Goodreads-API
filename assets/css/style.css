@@ -3,7 +3,6 @@
 
 .search_box {
   padding-top: 100px;
-  padding-left: 100px
 }
 
 .page_num_box {
@@ -49,7 +48,6 @@ h3 {
 /*js-results*/
 .js-search_result {
 	padding-left: 5px;
-	max-width: 720px;
 	display: flex;
 }
 
@@ -59,11 +57,16 @@ h3 {
 
 .js-results {
 	padding-left: 10px;
+}
 
+.js-result_title{
+	cursor: pointer;
 }
 
 .js-result_thumb{
-	
+	position: relative;
+	top: 0;
+	bottom: 0;
 }
 
 .js-result_info_box {
@@ -76,7 +79,6 @@ h3 {
 
 .js-result_info_box hr {
   margin-left: 0;
-  max-width: 720px;
   margin-bottom: 20px;
   margin-top: 20px;
 }
@@ -87,8 +89,10 @@ h3 {
 	top: 50%;
 	left: 50%;
 	display: flex;
+	flex-direction: column;
 	margin-top: -50px;
-    margin-left: -270px
+    margin-left: -270px;
+    align-items: center;
 }
 
 .no_entry_message {
@@ -101,11 +105,8 @@ h3 {
 }
 
 #js-entry_details {
-	display: flex;
-	flex-direction: column;
-	margin-top:  100px;
-	margin-left:  50px;
-	width: 150px;
+	padding-top: 120px;
+	padding-left: 50px;
 }
 
 .pages_error {
@@ -113,26 +114,20 @@ h3 {
 }
 
 .js-input_window {
-	margin-top:  100px;
-	margin-left:  50px
+	padding-top:  100px;
+	padding-left:  50px
 }
 
 .text_input_area{
-	width: 720px;
 	height: 600px;
+	width: 75%
 }
 
-.btn-submit_text_input{
-	margin-bottom: 20px;
-	width: 30px;
-	height: 30px;
-	border-radius: 5px;
-}
 
 .js-entires_container {
-	margin-top:  100px;
-	margin-left:  50px;
-	margin-right: 50px;
+	padding-top:  100px;
+	padding-left:  50px;
+	padding-right: 50px;
 }
 
 .js-entry {
@@ -154,24 +149,41 @@ h3 {
 }
 
 .js-entry h4 {
+	font-size: 18px;
+	font-weight: normal;
 	margin-top: 5px;
+	margin-bottom: 4px;
+	border-bottom: 1px solid #a9a8a0;
 }
 
 div.js-entry_paragraph p{
-	margin: 0
+	color: #6e6d67; 
+	font-style: italic;
+	margin: 10px auto 10px auto;
+
 }
 
 .js-view_window {
-	margin-top:  100px;
-	margin-left:  50px;
-	margin-right: 50px;
+	padding-top:  100px;
+	padding-left:  50px;
+	padding-right: 50px;
 }
 
 .js-input_window hr {
-  max-width: 720px;
   margin-left: 0;
   margin-bottom: 20px;
   margin-top: 20px;
+  width: 75%
+}
+
+.btn-submit_entry_details{
+	margin-left: 10px;
+	margin-top: 20px;
+}
+
+.btn-view_book_pages{
+	margin-top: 15px;
+	width: 140px;
 }
 
 /*home page*/
@@ -183,8 +195,7 @@ div.js-entry_paragraph p{
 
 .js-book_detail {
 	border: 1px #aaaaaa solid;
-	background-color: lightgrey;
-	padding-left: 5px;
+	background-color: white;
 	display: flex;
 	margin: 0;
 	margin-bottom: 20px;
@@ -202,9 +213,11 @@ div.js-entry_paragraph p{
 }
 
 .book_img {
-	width: 155px;
+	
 }
 
 .book_detail_title{
+	margin-top: 4px;
+	margin-bottom: 4px;
 	cursor: pointer;
 }
