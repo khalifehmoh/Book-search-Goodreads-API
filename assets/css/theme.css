@@ -21,9 +21,18 @@ textarea:focus {
 	border: 1px solid #E85A4F;
 }
 
+a {
+	color: #ec8179
+}
+
+a:hover {
+	color: #b80d00
+}
+
 button {
 	cursor: pointer;
 	background-color: #E85A4F;
+	transition: 0.2s background-color linear, 0.1s transform linear, 0.1s box-shadow linear;
     border-radius: 25px;
 	border: none;
 	padding: 10px;
@@ -32,12 +41,24 @@ button {
 }
 
 button:hover {
-	transition: 0.2s all;
 	background-color: #ec8179;
 }
 
 button:focus {
 	outline: 0;
+}
+
+button:active {
+	box-shadow: 0 2px rgba( 0, 0, 0, 0.5);
+	transform: translateY(3px);
+}
+
+.js-result_info_box h3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    line-height: 30px  
 }
 
 
@@ -53,9 +74,18 @@ button:focus {
 	font-size: 20px
 }
 
+@media (max-width: 600px) {
+  .btn-main {
+  	border-radius: 25px;
+  	width: 150px;
+    height: 60px;
+	font-size: 16px
+  }
+}
+
 .btn-main {
 	position: fixed;
-	top: 800px;
+	top: 85vh;
 	right: 50px;
 	z-index: 8
 }
@@ -199,7 +229,7 @@ input#end_page_num{
 	margin-right: 4.5%
 }
 
-/**/
+/*main menu*/
 
 
 

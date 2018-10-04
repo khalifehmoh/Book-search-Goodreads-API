@@ -267,7 +267,7 @@ function renderEntriesInput(){
   var sessionDetails = `<div class="js-session_details">
                             <h3 class='session_num'>session #: <span class='session_num_num'>${sessionNum}</span></h3>
                             <h4 class='session_date'>${entryDate}</h4>
-                            <h4>pages ${startPage} - ${endPage}</h4>                 
+                            <h4>p${startPage} - ${endPage}</h4>                 
                         </div>`
 
   var inputArea = `     <div class="js-text_input">
@@ -298,7 +298,7 @@ function renderEntriesEditInput(){
   var sessionDetails = `<div class="js-session_details">
                             <h3 class='session_num'>session #: <span class='session_num_num'>${sessionNum}</span></h3>
                             <h4 class='session_date'>${entryDate}</h4>
-                            <h4>pages ${startPage} - ${endPage}</h4>                 
+                            <h4>p${startPage} - ${endPage}</h4>                 
                         </div>`
 
   var inputArea = `     <div class="js-text_input">
@@ -313,7 +313,7 @@ function renderEntriesEditInput(){
                      </div>`
 
   var backIcon = '<i class="back-entries_page fas fa-arrow-left"></i>'
-  var button = `<button class="btn-submit_text_input_edit btn-main">+</button>`
+  var button = `<button class="btn-submit_text_input_edit btn-main">OK</button>`
   $('.handle').html(backIcon); 
   $('.contents').html(entryWindow);
   $('.main_button').html(button);
@@ -353,6 +353,9 @@ function renderEntryView(sessionNum,pages,date,entryContent) {
                   var pageOn = item.book.pageOn;
                   var pageOff = item.book.bookPages;
                   var progress = pageOn/pageOff * 100;
+                  if (progress === Infinity) {
+                    progress = 0
+                  }
 
                   return `<div class="js-book_detail">
                             <img class="book_img" src="
@@ -360,9 +363,11 @@ function renderEntryView(sessionNum,pages,date,entryContent) {
                             <div class="book_detail">
                               <h2 class='book_detail_title'>${item.book.bookTitle}</h2>
                               <hr>
-                              <h4 class='book_detail_progress'>progress: %<span class="'book_detail_progress_num">${Math.ceil(progress)}</span></h4>
-                              <h4 class='book_detail_page'>p<span class="'book_detail_page_on_num">${item.book.pageOn}</span>/<span class="'book_detail_page_off_num">${item.book.bookPages}</span></h4>
-                              <h4 class='book_detail_sessions'>sessions: <span class="'book_detail_sessions_num">${item.book.numOfEntries}</span></h4>
+                              <h3 class='book_detail_progress'>%<span class="'book_detail_progress_num">${Math.ceil(progress)}</span> done</h4>
+                              <div class="details_box">
+                                <h4 class='book_detail_page'>p<span class="'book_detail_page_on_num">${item.book.pageOn}</span>/<span class="'book_detail_page_off_num">${item.book.bookPages}</span></h4>
+                                <h4 class='book_detail_sessions'>sessions: <span class="'book_detail_sessions_num">${item.book.numOfEntries}</span></h4>
+                              </div>
                             </div>
                           </div>`
   })
@@ -594,7 +599,7 @@ $('.contents').on('click','.book_detail_title', function(e) {
 //navigation listeners
 function handleBackHome() {
 $('.navbar').on('click','.back-home_page', function(e) {
-    $('.js-main_header').text('Reflect')
+    $('.js-main_header').text('Libry')
     var bookTaken = getActiveBook();
     changeBookActiveFalse(bookTaken);
     renderHomePage();

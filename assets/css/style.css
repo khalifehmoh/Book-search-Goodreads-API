@@ -114,13 +114,32 @@ h3 {
 }
 
 .js-input_window {
-	padding-top:  100px;
+	padding-top:  60px;
 	padding-left:  50px
+}
+
+@media (max-width: 576px) {
+.js-input_window {
+    padding-top: 60px;
+    padding-left: 15px;
+}
+.text_input_area{
+	height: 600px;
+	width: 95%
+}
 }
 
 .text_input_area{
 	height: 600px;
-	width: 75%
+	width: 75%;
+	padding: 15px
+}
+
+@media (max-width: 576px) {
+.text_input_area{
+	height: 600px;
+	width: 95%
+}
 }
 
 
@@ -128,6 +147,14 @@ h3 {
 	padding-top:  100px;
 	padding-left:  50px;
 	padding-right: 50px;
+}
+
+@media (max-width: 576px) {
+.js-entires_container {
+    padding-top:  100px;
+	padding-left:  25px;
+	padding-right: 25px;
+	}
 }
 
 .js-entry {
@@ -164,9 +191,17 @@ div.js-entry_paragraph p{
 }
 
 .js-view_window {
-	padding-top:  100px;
+	padding-top:  60px;
 	padding-left:  50px;
 	padding-right: 50px;
+}
+
+@media (max-width: 576px) {
+.js-view_window {
+    padding-top: 60px;
+    padding-left: 15px;
+    padding-right: 15px
+	}
 }
 
 .js-input_window hr {
@@ -192,36 +227,61 @@ div.js-entry_paragraph p{
 }
 
 .book_detail  {
+	height: 170px;
 	width: 100%;
 	margin-left: 10px;
 	margin-right: 10px;
 }
 
 .book_detail hr {
+	
 	width: 100%;
 	margin-right: 10px;
+	margin-top: 0;
 }
 
 .book_img {
-	
+	width: 135px
 }
 
 .book_detail_title{
+	margin-left: 10px;
 	margin-top: 4px;
-	margin-bottom: 4px;
-	cursor: pointer;;
+	margin-bottom: 2px;
+	cursor: pointer;
 }
 
 .book_detail_title {
 	overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    line-height: 50px
+}
+
+.book_detail_progress {
+	margin-left: 10px;
+	margin-bottom: 13px
+}
+
+.details_box {
+	margin-left: 15px;
+    padding-left: 10px;
+    border-left: 1px solid grey;
+    color: grey;
+}
+
+.details_box h4 {
+	margin: 5px;
+	font-style: italic
 }
 
 .js-main_header{
 	overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    line-height: 60px;
+    margin: 0
 }
 
 
